@@ -10,7 +10,8 @@ function helloWorld(req,res){
 function getContainers(req,res){
 	var container = [];
 	docker.listContainers(function (err, containers) {
-			res.send(containers);
+	  res.header("Access-Control-Allow-Headers",'*')
+	  res.send(containers);
 	});	
 }
 
@@ -23,6 +24,7 @@ function getImages(req,res){
 
 function getInfo(req,res){
 	docker.info(function(err,info){
+		res.header("Access-Control-Allow-Headers",'*')
 		res.send(info);
 	})
 }
@@ -33,9 +35,9 @@ function getNetworks(req,res){
 	})
 }
 
-function getEvents(res,res){
-	docker.getEvents(function(err,eventsdocker){
-		res.send(eventsdocker);
+function getEvents(res,ress){
+	docker.getEvents(function(err,data){
+		ress.send(data);
 	})
 }
 
