@@ -10,7 +10,6 @@ function helloWorld(req,res){
 function getContainers(req,res){
 	var container = [];
 	docker.listContainers(function (err, containers) {
-	  res.header("Access-Control-Allow-Headers",'*')
 	  res.send(containers);
 	});	
 }
@@ -24,7 +23,6 @@ function getImages(req,res){
 
 function getInfo(req,res){
 	docker.info(function(err,info){
-		res.header("Access-Control-Allow-Headers",'*')
 		res.send(info);
 	})
 }
@@ -41,11 +39,18 @@ function getEvents(res,ress){
 	})
 }
 
+function getSwarmService(req,res){
+	docker.listServices(function(err,services){
+		res.send(services);
+	})
+}
+
 module.exports = {
 	"helloWorld" : helloWorld,
 	"getContainers" : getContainers,
 	"getImages" : getImages,
 	"getInfo" : getInfo,
 	"getNetworks" : getNetworks,
-	"getEvents" : getEvents
+	"getEvents" : getEvents,
+	"getSwarmService":getSwarmService
 }
