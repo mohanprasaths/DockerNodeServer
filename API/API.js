@@ -54,37 +54,46 @@ function getSwarmService(req,res){
 function getDashBoardKPI(req,res){
 	var container = [];
 	var data=[];
-	(new Promise(function(resolve,reject){
-		 docker.listContainers(function (err, containers) {
-		  containers.forEach(function (containerInfo) {
-		    container = docker.getContainer(containerInfo.Id);
-		    var dataToSend =[];
-		    container.stats({stream:false}, function(err, stream){
-		    // to close the stream you need to use a nested method from inside the stream itself\
-		    console.log(container.id)
-		    console.log(formatBytes(stream.cpu_stats.cpu_usage.total_usage));
-		    console.log(formatBytes(stream.cpu_stats.system_cpu_usage));
-		    console.log(formatBytes(stream.memory_stats.max_usage));
-		    console.log(formatBytes(stream.memory_stats.usage));
-		    console.log(formatBytes(stream.networks.eth0.rx_bytes));
-		    console.log(formatBytes(stream.networks.eth0.rx_packets));
-		    console.log(formatBytes(stream.networks.eth0.tx_bytes));
-		    console.log(formatBytes(stream.networks.eth0.tx_packets));
-		    dataToSend.containerID = container.id;
-		    dataToSend.cpu = {totalUsage : stream.cpu_stats.cpu_usage.total_usage ,
-		                      maxUsage : stream.memory_stats.max_usage };
-		    dataToSend.memory = {maxUsage : stream.memory_stats.max_usage , totalUsage : stream.memory_stats.usage };
-		    dataToSend.networks = {rx_bytes : stream.networks.eth0.rx_bytes , rx_packets : stream.networks.eth0.rx_packets,
-		                          tx_bytes : stream.networks.eth0.tx_bytes , tx_packets : stream.networks.eth0.tx_packets };
-		    data.push(dataToSend);
+	var a = new Promise(function(resolve,reject){
+		 docker.listContainers(function(e,c){
+			resolve(c)	
+		})
+	})
 
-		  });
-		  });
-		}); 
 
-	})).then(function(){console.log("data");res.send(data)},function(){console.log("failes")})
-
-}
+	 var b =  a.then(function(data){
+	 	return Promise.all(data.map(function(container){
+	 	return new Promise(function(resolve){
+	 		con = docker.getContainer(container.Id);
+	 		resolve(con)
+	 	}).then(function(data){
+	 		return new Promise(function(resolve){
+	 			data.stats({stream:false}, function(err, stream){
+	 				resolve(stream)
+	 			})
+	 		}).then(function(stream){
+	 			return new Promise(function(resolve){
+	 				var dataToSend ;
+	 				dataToSend = {
+	 					containerID : container,
+	 					cpu : {totalUsage : stream.cpu_stats.cpu_usage.total_usage ,
+	 				                  maxUsage : stream.memory_stats.max_usage },
+	 				    memory : {maxUsage : stream.memory_stats.max_usage , totalUsage : stream.memory_stats.usage },
+	 				    networks : {rx_bytes : stream.networks.eth0.rx_bytes , rx_packets : stream.networks.eth0.rx_packets,
+	 				                      tx_bytes : stream.networks.eth0.tx_bytes , tx_packets : stream.networks.eth0.tx_packets }
+	 				}
+	 				 resolve(dataToSend)
+	 			}).then(function(dataTosend){
+	 				return new Promise(function(resolve){resolve(dataTosend)})
+	 			})
+	 		})
+	 	})
+	 }))
+	 	
+	 })
+	 console.log(b)
+	 b.then(function(data){console.log(data);res.send(data)})
+		}
 
 module.exports = {
 	"helloWorld" : helloWorld,

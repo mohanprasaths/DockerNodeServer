@@ -10,10 +10,19 @@
   "author": "mohanprasaths",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
+    "docker-allcontainers": "^0.6.1",
+    "docker-stats": "^0.7.0",
     "dockerode": "^2.3.1",
+    "dockerode-promise": "^0.1.0",
     "express": "^4.14.0",
-    "multer": "^1.2.0"
+    "multer": "^1.2.0",
+    "pg-promise": "^5.3.5",
+    "promise": "^7.1.1",
+    "react-d3-basic": "^1.6.11",
+    "through": "^2.3.8",
+    "through2": "^2.0.1"
   }
 }
