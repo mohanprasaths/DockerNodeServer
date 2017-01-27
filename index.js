@@ -18,6 +18,9 @@ app.get('/getImages', api.getImages)
 app.get('/getNetworks', api.getNetworks)
 app.get('/getInfo', api.getInfo)
 app.get('/getEvents', api.getEvents)
+app.get('/getSwarmService', api.getSwarmService)
+app.get('/getDashBoardKPI', api.getDashBoardKPI)
+
 
 
 var server = app.listen(8085, function () {
